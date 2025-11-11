@@ -23,7 +23,6 @@ export default function DigitalSculpture() {
   const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [narrationActive, setNarrationActive] = useState(false);
-  const [_autoSaveProgress, setAutoSaveProgress] = useState(0);
   const [showResetDialog, setShowResetDialog] = useState(false);
 
   const colors = ["#ef4444", "#3b82f6", "#fbbf24", "#10b981", "#a855f7"];
@@ -45,7 +44,6 @@ export default function DigitalSculpture() {
     const interval = setInterval(() => {
       if (points.length > 0) {
         localStorage.setItem("sculpture-points", JSON.stringify(points));
-        setAutoSaveProgress((p) => (p >= 100 ? 0 : p + 10));
       }
     }, 3000);
     return () => clearInterval(interval);
@@ -201,9 +199,7 @@ export default function DigitalSculpture() {
   // Guardar y reset
   const handleSave = () => {
     localStorage.setItem("sculpture-points", JSON.stringify(points));
-    setAutoSaveProgress(100);
     speak("¡Tu escultura ha sido guardada!");
-    setTimeout(() => setAutoSaveProgress(0), 2000);
   };
 
   const handleReset = () => {

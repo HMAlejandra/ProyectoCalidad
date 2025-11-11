@@ -79,10 +79,9 @@ const curiosidades = [
 
 // === COMPONENTE PRINCIPAL ===
 export default function SistemaSolar3D() {
-  const [_planetaSeleccionado, setPlanetaSeleccionado] = useState<string | null>(null);
+  const [, setPlanetaSeleccionado] = useState<string | null>(null);
   const [audioActivo, setAudioActivo] = useState(false);
   const [animando, setAnimando] = useState(true);
-  const [_rotacion, setRotacion] = useState(0);
   const [puntos, setPuntos] = useState(0);
   const [planetasDescubiertos, setPlanetasDescubiertos] = useState<string[]>([]);
 
@@ -149,7 +148,6 @@ export default function SistemaSolar3D() {
       ctx.arc(canvas.width / 2, canvas.height / 2, 50, 0, Math.PI * 2);
       ctx.fill();
 
-      if (animando) setRotacion((prev) => (prev + 0.5) % 360);
       animationRef.current = requestAnimationFrame(animate);
     };
 
