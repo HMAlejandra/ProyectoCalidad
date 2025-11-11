@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "../components/Layout";
 
+
 // Views
 import HomePage from "../views/HomePage";
 import ThreeDemoView from "../views/ThreeDemoView";
@@ -13,6 +14,12 @@ import ConversorUnid from "../views/ConversorUnid";
 import ValidContrasena from "../views/ValidContrasena";
 import ContadorClics from "../views/ContadorClics";
 import ListaTareas from "../views/ListaTareas";
+import Pintura3DPage from "../views/Pintura3DPage";
+import DigitalSculptureView from "../views/DigitalSculptureView";
+import SistemaSolar3DView from "../views/SistemaSolar3DView";
+
+
+
 
 export default function AppRoutes() {
   return (
@@ -29,6 +36,11 @@ export default function AppRoutes() {
         <Route path="validcontrasena" element={<ValidContrasena />} />
         <Route path="contadorclics" element={<ContadorClics />} />
         <Route path="listareas" element={<ListaTareas />} />
+        <Route path="/pintura3d" element={<Pintura3DPage />} />
+        <Route path="/escultura3d" element={<DigitalSculptureView />} />
+        <Route path="/sistema-solar" element={<SistemaSolar3DView />} />
+
+
       </Route>
     </Routes>
   );
