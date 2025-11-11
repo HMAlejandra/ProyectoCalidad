@@ -48,6 +48,7 @@ export default [
     rules: {
       // En TS, delegar indefinidos al chequeo de tipos de TypeScript
       "no-undef": "off",
+      "no-unused-vars": "off", // TypeScript se encarga via tsconfig noUnusedLocals
     },
   },
 
