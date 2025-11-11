@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SistemaSolar3D from "./SistemaSolar3D";

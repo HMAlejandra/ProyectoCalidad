@@ -1,3 +1,4 @@
+/// <reference types="node" />
 // Este archivo extiende el entorno de prueba de Jest.
 
 import "@testing-library/jest-dom";
