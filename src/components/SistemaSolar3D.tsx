@@ -1,9 +1,8 @@
 ﻿"use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Volume2, VolumeX, Play, Pause, Star } from "lucide-react"
+import { Volume2, VolumeX, Star } from "lucide-react"
 
-// === DATOS DE LOS PLANETAS ===
 const planetData: Record<
   string,
   {
@@ -17,147 +16,125 @@ const planetData: Record<
     detalles: string
     narracion: string
     datos: { distancia: string; temperatura: string; lunas: string }
+    brillo: number
+    ojos: boolean
   }
 > = {
   mercurio: {
     nombre: "Mercurio",
-    color: "#B0B0B0",
-    tamaño: 25,
-    orbita: 80,
+    color: "#808080",
+    tamaño: 35,
+    orbita: 100,
     velocidad: 1.6,
     emoji: "☿️",
     info: "Mercurio es el planeta más cercano al Sol. Es muy pequeño y muy caliente.",
     detalles: "No tiene atmósfera y sus temperaturas varían muchísimo.",
-    narracion:
-      "Mercurio es el planeta más cercano al Sol y el más pequeño del sistema solar. De día hace mucho calor pero de noche hace mucho frío. No tiene aire para respirar y está lleno de cráteres como la Luna.",
-    datos: {
-      distancia: "58 millones km",
-      temperatura: "430°C de día, -180°C de noche",
-      lunas: "0 lunas",
-    },
+    narracion: "Hola soy Mercurio, el planeta más rápido y cercano al Sol. Soy pequeñito pero muy rápido.",
+    datos: { distancia: "58 millones km", temperatura: "430°C de día, -180°C de noche", lunas: "0 lunas" },
+    brillo: 0.8,
+    ojos: true,
   },
   venus: {
     nombre: "Venus",
-    color: "#FFC649",
-    tamaño: 38,
-    orbita: 115,
+    color: "#FFA500",
+    tamaño: 45,
+    orbita: 140,
     velocidad: 1.2,
     emoji: "♀️",
     info: "Venus es el planeta más caliente y brilla mucho en el cielo nocturno.",
     detalles: "Gira en dirección opuesta a la mayoría de planetas.",
-    narracion:
-      "Venus es el planeta más caliente de todos, incluso más que Mercurio. Brilla tanto en el cielo que parece una estrella. Tiene nubes de ácido y gira al revés comparado con los demás planetas.",
-    datos: {
-      distancia: "108 millones km",
-      temperatura: "462°C",
-      lunas: "0 lunas",
-    },
+    narracion: "¡Hola! Soy Venus, la más bella del sistema solar. Soy muy caliente pero muy bonita.",
+    datos: { distancia: "108 millones km", temperatura: "462°C", lunas: "0 lunas" },
+    brillo: 1.2,
+    ojos: true,
   },
   tierra: {
     nombre: "Tierra",
-    color: "#4A90E2",
-    tamaño: 40,
-    orbita: 150,
+    color: "#1E90FF",
+    tamaño: 48,
+    orbita: 180,
     velocidad: 1,
     emoji: "🌍",
     info: "La Tierra es especial porque tiene agua, aire y la temperatura perfecta para la vida.",
     detalles: "Es el tercer planeta desde el Sol y el único conocido con vida.",
-    narracion:
-      "La Tierra es nuestro hogar. Es especial porque tiene agua, aire y la temperatura perfecta para la vida. Es el tercer planeta desde el Sol y el único conocido con vida. Tiene una luna que vemos en las noches.",
-    datos: {
-      distancia: "150 millones km",
-      temperatura: "15°C promedio",
-      lunas: "1 luna",
-    },
+    narracion: "¡Hola! Soy la Tierra, tu hogar. Soy azul porque tengo mucha agua y es un lugar muy bonito.",
+    datos: { distancia: "150 millones km", temperatura: "15°C promedio", lunas: "1 luna" },
+    brillo: 1.3,
+    ojos: true,
   },
   marte: {
     nombre: "Marte",
-    color: "#CD5C5C",
-    tamaño: 32,
-    orbita: 180,
+    color: "#DC143C",
+    tamaño: 40,
+    orbita: 220,
     velocidad: 0.8,
     emoji: "♂️",
-    info: "Marte es conocido como el planeta rojo por su color. Tiene los volcanes más grandes del sistema solar.",
+    info: "Marte es conocido como el planeta rojo por su color.",
     detalles: "Los científicos buscan señales de vida antigua en Marte.",
-    narracion:
-      "Marte es conocido como el planeta rojo. Su color se debe al óxido de hierro en su superficie. Tiene el volcán más grande del sistema solar llamado Monte Olimpo. Los científicos están buscando señales de vida antigua.",
-    datos: {
-      distancia: "228 millones km",
-      temperatura: "-63°C promedio",
-      lunas: "2 lunas: Fobos y Deimos",
-    },
+    narracion: "Hola, soy Marte el planeta rojo. Soy muy especial y los científicos me visitan con robots.",
+    datos: { distancia: "228 millones km", temperatura: "-63°C promedio", lunas: "2 lunas: Fobos y Deimos" },
+    brillo: 0.9,
+    ojos: true,
   },
   jupiter: {
     nombre: "Júpiter",
-    color: "#D4A574",
-    tamaño: 60,
-    orbita: 250,
+    color: "#DAA520",
+    tamaño: 75,
+    orbita: 300,
     velocidad: 0.4,
     emoji: "♃",
-    info: "Júpiter es el planeta más grande del sistema solar. Tiene una gran mancha roja que es una tormenta gigante.",
+    info: "Júpiter es el planeta más grande del sistema solar.",
     detalles: "Tiene más de 70 lunas y un fuerte campo magnético.",
     narracion:
-      "Júpiter es el gigante del sistema solar. Es el planeta más grande de todos. Tiene una gran mancha roja que es una tormenta gigante que lleva siglos activa. Tiene más de 79 lunas orbitando a su alrededor.",
-    datos: {
-      distancia: "778 millones km",
-      temperatura: "-145°C",
-      lunas: "+79 lunas",
-    },
+      "¡Hola! Soy Júpiter, el gigante del sistema solar. Soy tan grande que cabrían muchas Tierras dentro de mí.",
+    datos: { distancia: "778 millones km", temperatura: "-145°C", lunas: "+79 lunas" },
+    brillo: 1.1,
+    ojos: true,
   },
   saturno: {
     nombre: "Saturno",
-    color: "#E8D4A0",
-    tamaño: 55,
-    orbita: 320,
+    color: "#F4A460",
+    tamaño: 70,
+    orbita: 380,
     velocidad: 0.3,
     emoji: "♄",
     info: "Saturno es famoso por sus hermosos anillos hechos de hielo y rocas.",
     detalles: "Es el segundo planeta más grande y podría flotar en el agua.",
-    narracion:
-      "Saturno es el planeta más hermoso por sus anillos brillantes. Estos anillos están hechos de miles de millones de pedazos de hielo y rocas. Es tan liviano que podría flotar en el agua si hubiera un océano lo suficientemente grande.",
-    datos: {
-      distancia: "1.4 mil millones km",
-      temperatura: "-178°C",
-      lunas: "+82 lunas",
-    },
+    narracion: "¡Hola! Soy Saturno, tengo los anillos más hermosos del sistema solar. Soy muy bonito.",
+    datos: { distancia: "1.4 mil millones km", temperatura: "-178°C", lunas: "+82 lunas" },
+    brillo: 1.0,
+    ojos: true,
   },
   urano: {
     nombre: "Urano",
-    color: "#4FD0E7",
-    tamaño: 48,
-    orbita: 380,
+    color: "#00CED1",
+    tamaño: 58,
+    orbita: 450,
     velocidad: 0.2,
     emoji: "♅",
     info: "Urano es un planeta de color azul verdoso que gira de lado.",
     detalles: "Está tan lejos del Sol que es muy frío y oscuro.",
-    narracion:
-      "Urano es un planeta muy especial porque gira de lado, como si estuviera acostado. Es de color azul verdoso y tiene anillos como Saturno, pero son más difíciles de ver. Hace mucho frío en Urano.",
-    datos: {
-      distancia: "2.9 mil millones km",
-      temperatura: "-224°C",
-      lunas: "27 lunas",
-    },
+    narracion: "Hola, soy Urano, giro de lado como si estuviera acostado. Soy muy especial.",
+    datos: { distancia: "2.9 mil millones km", temperatura: "-224°C", lunas: "27 lunas" },
+    brillo: 0.85,
+    ojos: true,
   },
   neptuno: {
     nombre: "Neptuno",
     color: "#4169E1",
-    tamaño: 46,
-    orbita: 430,
+    tamaño: 55,
+    orbita: 520,
     velocidad: 0.15,
     emoji: "♆",
     info: "Neptuno es el planeta más alejado del Sol. Tiene vientos muy fuertes.",
     detalles: "Es de color azul intenso debido al metano en su atmósfera.",
-    narracion:
-      "Neptuno es el planeta más lejano del Sol en nuestro sistema solar. Es de color azul intenso y tiene los vientos más rápidos de todos los planetas. Tarda 165 años en dar una vuelta completa alrededor del Sol.",
-    datos: {
-      distancia: "4.5 mil millones km",
-      temperatura: "-214°C",
-      lunas: "14 lunas",
-    },
+    narracion: "¡Hola! Soy Neptuno, el planeta más lejano. Soy muy azul y tengo los vientos más rápidos.",
+    datos: { distancia: "4.5 mil millones km", temperatura: "-214°C", lunas: "14 lunas" },
+    brillo: 0.9,
+    ojos: true,
   },
 }
 
-// === CURIOSIDADES ===
 const curiosidades = [
   "🌟 El Sol es tan grande que cabrían 1.3 millones de Tierras dentro de él.",
   "🚀 La luz del Sol tarda 8 minutos en llegar a la Tierra.",
@@ -165,24 +142,27 @@ const curiosidades = [
   "⭐ Júpiter protege a la Tierra atrayendo asteroides con su gravedad.",
   "🌙 La Luna se está alejando de la Tierra 3.8 cm cada año.",
   "♀️ Venus gira en dirección contraria a los demás planetas.",
-  "🔴 Un día en Venus dura más que un año en Venus.",
-  "🌍 La Tierra es el único planeta no nombrado por un dios.",
 ]
 
-// === COMPONENTE PRINCIPAL ===
 export default function SistemaSolar3D() {
-  const [, setPlanetaSeleccionado] = useState<string | null>(null)
+  const [selectedPlanets, setSelectedPlanets] = useState<string[]>([])
   const [audioActivo, setAudioActivo] = useState(false)
-  const [animando, setAnimando] = useState(true)
   const [puntos, setPuntos] = useState(0)
   const [planetasDescubiertos, setPlanetasDescubiertos] = useState<string[]>([])
+  const [rotacion, setRotacion] = useState(0)
 
-  // ✅ Tipado correcto
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const animationRef = useRef<number | null>(null)
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null)
+  const planetPositionsRef = useRef<Record<string, { x: number; y: number; tamaño: number }>>({})
 
-  // === FUNCIONES DE VOZ ===
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRotacion((prev) => (prev + 0.5) % 360)
+    }, 50)
+    return () => clearInterval(interval)
+  }, [])
+
   const reproducirNarracion = (texto: string) => {
     if (speechRef.current) window.speechSynthesis.cancel()
 
@@ -210,87 +190,164 @@ export default function SistemaSolar3D() {
 
   const handlePlanetaClick = (planeta: string) => {
     detenerNarracion()
-    setPlanetaSeleccionado(planeta)
+
+    if (selectedPlanets.includes(planeta)) {
+      setSelectedPlanets(selectedPlanets.filter((p) => p !== planeta))
+    } else {
+      setSelectedPlanets([...selectedPlanets, planeta])
+    }
 
     if (!planetasDescubiertos.includes(planeta)) {
       setPlanetasDescubiertos([...planetasDescubiertos, planeta])
       setPuntos((prev) => prev + 10)
       reproducirNarracion(
-        `¡Felicidades! Has descubierto ${planetData[planeta].nombre}. Ganaste 10 puntos. ${planetData[planeta].narracion}`,
+        `¡Felicidades! Has descubierto ${planetData[planeta].nombre}. ${planetData[planeta].narracion}`,
       )
     } else {
       reproducirNarracion(planetData[planeta].narracion)
     }
   }
 
-  // === ANIMACIÓN CANVAS ===
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    let rotacion = 0
-
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.fillStyle = "#0a1628"
+
+      // Fondo estrellado
+      ctx.fillStyle = "#0a0e27"
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      const centerX = canvas.width / 2
-      const centerY = canvas.height / 2
-
-      // Dibujar estrellas de fondo
-      for (let i = 0; i < 100; i++) {
-        const x = (i * 67) % canvas.width
+      // Estrellas animadas
+      for (let i = 0; i < 150; i++) {
+        const x = (i * 67 + rotacion * 0.5) % canvas.width
         const y = (i * 113) % canvas.height
-        const brillo = 0.3 + Math.sin(Date.now() / 1000 + i) * 0.3
+        const brillo = 0.3 + Math.sin(Date.now() / 1000 + i) * 0.4
         ctx.fillStyle = `rgba(255, 255, 255, ${brillo})`
         ctx.fillRect(x, y, 2, 2)
       }
 
-      // Dibujar el Sol
-      const pulso = 1 + Math.sin(Date.now() / 500) * 0.05
-      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 50 * pulso)
-      gradient.addColorStop(0, "#FFF4E6")
-      gradient.addColorStop(0.3, "#FDB813")
-      gradient.addColorStop(0.6, "#FFAA00")
-      gradient.addColorStop(1, "#FF6B00")
+      const centerX = canvas.width / 2
+      const centerY = canvas.height / 2
+
+      // Sol con pulso y gradiente
+      const pulso = 1 + Math.sin(Date.now() / 500) * 0.1
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 60 * pulso)
+      gradient.addColorStop(0, "#FFF8DC")
+      gradient.addColorStop(0.3, "#FFD700")
+      gradient.addColorStop(0.6, "#FF8C00")
+      gradient.addColorStop(1, "#FF4500")
       ctx.fillStyle = gradient
       ctx.beginPath()
-      ctx.arc(centerX, centerY, 50 * pulso, 0, Math.PI * 2)
+      ctx.arc(centerX, centerY, 60 * pulso, 0, Math.PI * 2)
       ctx.fill()
 
-      // Dibujar planetas y órbitas
-      Object.values(planetData).forEach((planeta) => {
-        // Dibujar órbita como círculo
-        ctx.strokeStyle = "rgba(100, 149, 237, 0.2)"
-        ctx.lineWidth = 1
+      // Rayos de sol
+      ctx.strokeStyle = "rgba(255, 200, 0, 0.3)"
+      ctx.lineWidth = 2
+      for (let i = 0; i < 12; i++) {
+        const angle = (i * Math.PI) / 6
+        const x1 = centerX + Math.cos(angle) * 70
+        const y1 = centerY + Math.sin(angle) * 70
+        const x2 = centerX + Math.cos(angle) * 90
+        const y2 = centerY + Math.sin(angle) * 90
+        ctx.beginPath()
+        ctx.moveTo(x1, y1)
+        ctx.lineTo(x2, y2)
+        ctx.stroke()
+      }
+
+      planetPositionsRef.current = {}
+
+      Object.entries(planetData).forEach(([key, planeta]) => {
+        // Órbita
+        ctx.strokeStyle = "rgba(100, 200, 255, 0.2)"
+        ctx.lineWidth = 2
         ctx.beginPath()
         ctx.arc(centerX, centerY, planeta.orbita, 0, Math.PI * 2)
         ctx.stroke()
 
-        // Calcular posición del planeta
-        const angulo = (rotacion * planeta.velocidad) * (Math.PI / 180)
+        // Calcular posición con rotación continua
+        const angulo = rotacion * planeta.velocidad * (Math.PI / 180)
         const x = centerX + Math.cos(angulo) * planeta.orbita
-        const y = centerY + Math.sin(angulo) * planeta.orbita * 0.4
+        const y = centerY + Math.sin(angulo) * planeta.orbita * 0.5
 
-        // Dibujar planeta
-        ctx.fillStyle = planeta.color
+        planetPositionsRef.current[key] = { x, y, tamaño: planeta.tamaño }
+
+        // Aura de selección
+        if (selectedPlanets.includes(key)) {
+          ctx.fillStyle = "rgba(255, 255, 0, 0.2)"
+          ctx.beginPath()
+          ctx.arc(x, y, planeta.tamaño + 20, 0, Math.PI * 2)
+          ctx.fill()
+
+          ctx.strokeStyle = "rgba(255, 255, 0, 0.5)"
+          ctx.lineWidth = 3
+          ctx.beginPath()
+          ctx.arc(x, y, planeta.tamaño + 20, 0, Math.PI * 2)
+          ctx.stroke()
+        }
+
+        // Planeta con gradiente
+        const gradPlanet = ctx.createRadialGradient(
+          x - planeta.tamaño / 3,
+          y - planeta.tamaño / 3,
+          0,
+          x,
+          y,
+          planeta.tamaño,
+        )
+        gradPlanet.addColorStop(0, planeta.color)
+        gradPlanet.addColorStop(0.7, planeta.color)
+        gradPlanet.addColorStop(1, `${planeta.color}80`)
+        ctx.fillStyle = gradPlanet
         ctx.beginPath()
-        ctx.arc(x, y, planeta.tamaño / 2, 0, Math.PI * 2)
+        ctx.arc(x, y, planeta.tamaño, 0, Math.PI * 2)
         ctx.fill()
 
-        // Dibujar nombre del planeta cerca
-        ctx.font = "bold 10px Arial"
-        ctx.fillStyle = "#FFFFFF"
-        ctx.textAlign = "center"
-        ctx.fillText(planeta.emoji, x, y - planeta.tamaño / 2 - 8)
-      })
+        // Brillo
+        ctx.fillStyle = `rgba(255, 255, 255, ${planeta.brillo * 0.3})`
+        ctx.beginPath()
+        ctx.arc(x - planeta.tamaño / 3, y - planeta.tamaño / 3, planeta.tamaño / 3, 0, Math.PI * 2)
+        ctx.fill()
 
-      if (animando) {
-        rotacion = (rotacion + 0.5) % 360
-      }
+        if (planeta.ojos) {
+          const eyeY = y - planeta.tamaño / 4
+          const eyeSize = planeta.tamaño / 6
+
+          // Ojo izquierdo
+          ctx.fillStyle = "rgba(255, 255, 255, 0.8)"
+          ctx.beginPath()
+          ctx.arc(x - planeta.tamaño / 4, eyeY, eyeSize, 0, Math.PI * 2)
+          ctx.fill()
+
+          ctx.fillStyle = "#000"
+          ctx.beginPath()
+          ctx.arc(x - planeta.tamaño / 4, eyeY, eyeSize / 2, 0, Math.PI * 2)
+          ctx.fill()
+
+          // Ojo derecho
+          ctx.fillStyle = "rgba(255, 255, 255, 0.8)"
+          ctx.beginPath()
+          ctx.arc(x + planeta.tamaño / 4, eyeY, eyeSize, 0, Math.PI * 2)
+          ctx.fill()
+
+          ctx.fillStyle = "#000"
+          ctx.beginPath()
+          ctx.arc(x + planeta.tamaño / 4, eyeY, eyeSize / 2, 0, Math.PI * 2)
+          ctx.fill()
+
+          // Sonrisa
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.6)"
+          ctx.lineWidth = 2
+          ctx.beginPath()
+          ctx.arc(x, y + planeta.tamaño / 4, planeta.tamaño / 3, 0, Math.PI, false)
+          ctx.stroke()
+        }
+      })
 
       animationRef.current = requestAnimationFrame(animate)
     }
@@ -299,7 +356,7 @@ export default function SistemaSolar3D() {
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [animando])
+  }, [selectedPlanets, rotacion])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-200 via-pink-100 to-blue-100 py-8 px-4 sm:px-6 lg:px-8">
@@ -319,16 +376,31 @@ export default function SistemaSolar3D() {
         <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl shadow-purple-100/50 p-6 transition-all">
           <canvas
             ref={canvasRef}
-            width={800}
-            height={600}
-            className="block mx-auto rounded-2xl shadow-lg w-full max-w-full h-auto"
-            onClick={() => handlePlanetaClick("tierra")}
+            width={900}
+            height={650}
+            className="block mx-auto rounded-2xl shadow-lg w-full max-w-full h-auto cursor-pointer bg-slate-900"
+            onClick={(e) => {
+              const canvas = canvasRef.current
+              if (!canvas) return
+              const rect = canvas.getBoundingClientRect()
+              const x = e.clientX - rect.left
+              const y = e.clientY - rect.top
+
+              let planetClicked = false
+              Object.entries(planetPositionsRef.current).forEach(([key, pos]) => {
+                const dist = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2)
+                if (dist < pos.tamaño + 20 && !planetClicked) {
+                  handlePlanetaClick(key)
+                  planetClicked = true
+                }
+              })
+            }}
           />
 
           <div className="mt-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl p-4 text-center">
             <p className="text-purple-600 font-medium flex items-center justify-center gap-2">
               <span className="text-xl">👆</span>
-              Haz clic en un planeta para escucharlo
+              Haz clic en los planetas para seleccionarlos y escucha sus historias
               <span className="text-xl">🚀</span>
             </p>
           </div>
@@ -356,7 +428,11 @@ export default function SistemaSolar3D() {
                 planetasDescubiertos.map((planeta) => (
                   <span
                     key={planeta}
-                    className="px-3 py-1 bg-gradient-to-r from-blue-200 to-purple-200 text-purple-700 rounded-full text-sm font-medium shadow-md"
+                    className={`px-3 py-1 rounded-full text-sm font-medium shadow-md ${
+                      selectedPlanets.includes(planeta)
+                        ? "bg-gradient-to-r from-yellow-200 to-yellow-300 text-yellow-700"
+                        : "bg-gradient-to-r from-blue-200 to-purple-200 text-purple-700"
+                    }`}
                   >
                     {planetData[planeta]?.emoji} {planetData[planeta]?.nombre}
                   </span>
@@ -372,17 +448,10 @@ export default function SistemaSolar3D() {
           <p className="text-purple-600 font-semibold text-center mb-4">Controles</p>
           <div className="flex justify-center items-center gap-4 flex-wrap">
             <button
-              onClick={() => setAnimando(!animando)}
-              className="p-4 bg-gradient-to-br from-blue-200 to-blue-300 hover:from-blue-300 hover:to-blue-400 text-blue-700 rounded-full shadow-lg hover:scale-110 transition-all duration-300"
-              aria-label={animando ? "Pausar animación" : "Reproducir animación"}
-            >
-              {animando ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-            </button>
-
-            <button
-              onClick={() => (audioActivo ? detenerNarracion() : reproducirNarracion("Modo narración activado."))}
+              onClick={() => (audioActivo ? detenerNarracion() : reproducirNarracion("Bienvenido al explorador solar"))}
               className="p-4 bg-gradient-to-br from-green-200 to-emerald-300 hover:from-green-300 hover:to-emerald-400 text-green-700 rounded-full shadow-lg hover:scale-110 transition-all duration-300"
               aria-label={audioActivo ? "Detener narración" : "Activar narración"}
+              title={audioActivo ? "Detener" : "Narración"}
             >
               {audioActivo ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
             </button>
@@ -391,13 +460,13 @@ export default function SistemaSolar3D() {
               onClick={() => reproducirNarracion(curiosidades[Math.floor(Math.random() * curiosidades.length)])}
               className="p-4 bg-gradient-to-br from-yellow-200 to-orange-300 hover:from-yellow-300 hover:to-orange-400 text-orange-700 rounded-full shadow-lg hover:scale-110 transition-all duration-300 animate-pulse"
               aria-label="Escuchar curiosidad"
+              title="Curiosidades"
             >
               <Star className="w-6 h-6" />
             </button>
           </div>
 
           <div className="flex justify-center gap-8 mt-4 text-sm">
-            <span className="text-purple-400 font-medium">⏯️ Pausar/Reproducir</span>
             <span className="text-purple-400 font-medium">🔊 Narración</span>
             <span className="text-purple-400 font-medium">✨ Curiosidades</span>
           </div>

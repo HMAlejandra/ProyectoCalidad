@@ -2,78 +2,60 @@
 
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
-import { RotateCcw, Save, Volume2, VolumeX, Paintbrush, Info } from "lucide-react"
+import { RotateCcw, Save, Volume2, VolumeX, Paintbrush } from "lucide-react"
 
 const Pintura3D: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [color, setColor] = useState("#FF6B6B")
-  const [brushSize, setBrushSize] = useState(2)
-  const [effect, setEffect] = useState("glow")
+  const [brushSize, setBrushSize] = useState(3)
+  const [effect, setEffect] = useState("normal")
   const [isDrawing, setIsDrawing] = useState(false)
   const [narrationEnabled, setNarrationEnabled] = useState(true)
   const lastMouseXRef = useRef(0)
   const lastMouseYRef = useRef(0)
 
   const colors = [
-    ["#FF6B6B", "#74B9FF", "#55EFC4", "#FECA57", "#FF7979", "#FFFFFF"],
-    ["#FF6348", "#5F9EE8", "#4CD47D", "#FFA45C", "#FF5E7D", "#F0F0F0"],
+    ["#FF6B6B", "#FF1744", "#F50057", "#2D9DB4", "#4ECDC4", "#00BCD4"],
+    ["#FFE66D", "#FFC400", "#FF9800", "#95E1D3", "#FF9FF3", "#C7CEEA"],
   ]
 
-  // Herramientas disponibles (para uso futuro)
-  // const tools = [
-  //   { id: "brush", name: "Pincel", icon: Paintbrush, description: "Dibuja líneas suaves" },
-  //   { id: "eraser", name: "Borrador", icon: Eraser, description: "Borra partes del dibujo" },
-  // ];
-
-  const brushSizes = [1, 2, 4, 8, 16]
+  const brushSizes = [1, 2, 3, 5, 8]
 
   const effects = [
-    { id: "glow", name: "Brillo", color: "from-blue-400 to-cyan-400" },
-    { id: "sparkle", name: "Chispas", color: "from-pink-400 to-purple-400" },
-    { id: "shimmer", name: "Brillos", color: "from-yellow-400 to-orange-400" },
+    { id: "normal", name: "Pincel Normal", icon: "🖌️" },
+    { id: "glow", name: "Brillo Resplandeciente", icon: "✨" },
+    { id: "sparkle", name: "Chispas Mágicas", icon: "⭐" },
+    { id: "rainbow", name: "Arcoíris", icon: "🌈" },
+    { id: "blurry", name: "Desenfoque Suave", icon: "🌫️" },
   ]
 
-  // Inicializar el lienzo
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
-    ctx!.fillStyle = "#E8F4F8"
-    ctx!.fillRect(0, 0, canvas.width, canvas.height)
-    speak("Bienvenido a DreamDraw 3D. Elige una herramienta para empezar a dibujar")
+    if (!ctx) return
+    const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+    bgGrad.addColorStop(0, "#FFF9E6")
+    bgGrad.addColorStop(1, "#E6F3FF")
+    ctx.fillStyle = bgGrad
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    speak("Bienvenido a DreamDraw. Elige un pincel y comienza a crear magia")
   }, [])
 
   const speak = (text: string) => {
     if (!narrationEnabled) return
-
-    // Efecto sonoro simple
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
-      const oscillator = audioContext.createOscillator()
-      const gainNode = audioContext.createGain()
-      oscillator.connect(gainNode)
-      gainNode.connect(audioContext.destination)
-      oscillator.frequency.value = 600
-      oscillator.type = "sine"
-      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3)
-      oscillator.start(audioContext.currentTime)
-      oscillator.stop(audioContext.currentTime + 0.3)
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel()
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.lang = "es-ES"
+        utterance.rate = 0.9
+        utterance.pitch = 1.2
+        utterance.volume = 1
+        window.speechSynthesis.speak(utterance)
+      }
     } catch (e) {
-      console.log("Audio context error:", e)
-    }
-
-    // Narración de voz
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel()
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.lang = "es-ES"
-      utterance.rate = 0.9
-      utterance.pitch = 1.2
-      utterance.volume = 1
-      window.speechSynthesis.speak(utterance)
-    } else {
-      console.log("Narración:", text)
+      console.log("Audio error:", e)
     }
   }
 
@@ -89,7 +71,9 @@ const Pintura3D: React.FC = () => {
   const stopDrawing = () => {
     setIsDrawing(false)
     const ctx = canvasRef.current!.getContext("2d")
-    ctx!.beginPath()
+    if (ctx) {
+      ctx.beginPath()
+    }
   }
 
   const handleMouseMove = (e: any) => {
@@ -100,32 +84,87 @@ const Pintura3D: React.FC = () => {
     const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left
     const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
 
-    ctx.lineWidth = brushSize * 8
-    ctx.lineCap = "round"
-    ctx.strokeStyle = color
-    ctx.shadowBlur = effect === "glow" ? 20 : 0
-    ctx.shadowColor = effect === "glow" ? color : "transparent"
+    if (effect === "normal") {
+      ctx.lineWidth = brushSize * 4
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.strokeStyle = color
+      ctx.shadowBlur = 0
+      ctx.lineTo(x, y)
+      ctx.stroke()
+    } else if (effect === "glow") {
+      ctx.lineWidth = brushSize * 6
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.strokeStyle = color
+      ctx.shadowBlur = 15
+      ctx.shadowColor = color
+      ctx.lineTo(x, y)
+      ctx.stroke()
+      ctx.shadowBlur = 0
+    } else if (effect === "sparkle") {
+      // Línea principal
+      ctx.lineWidth = brushSize * 3
+      ctx.strokeStyle = color
+      ctx.shadowBlur = 0
+      ctx.lineTo(x, y)
+      ctx.stroke()
+      // Agregar chispas alrededor
+      for (let i = 0; i < 3; i++) {
+        const angle = Math.random() * Math.PI * 2
+        const dist = Math.random() * 20 + 10
+        const sx = x + Math.cos(angle) * dist
+        const sy = y + Math.sin(angle) * dist
+        ctx.fillStyle = color
+        ctx.globalAlpha = 0.6
+        ctx.fillRect(sx - 2, sy - 2, 4, 4)
+        ctx.globalAlpha = 1
+      }
+    } else if (effect === "rainbow") {
+      // Efecto arcoíris con cambio de color
+      const colors = ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#4B0082", "#9400D3"]
+      const colorIndex = Math.floor((Date.now() / 50) % colors.length)
+      ctx.lineWidth = brushSize * 5
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.strokeStyle = colors[colorIndex]
+      ctx.shadowBlur = 5
+      ctx.shadowColor = colors[colorIndex]
+      ctx.lineTo(x, y)
+      ctx.stroke()
+      ctx.shadowBlur = 0
+    } else if (effect === "blurry") {
+      ctx.lineWidth = brushSize * 8
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.strokeStyle = color
+      ctx.globalAlpha = 0.5
+      ctx.lineTo(x, y)
+      ctx.stroke()
+      ctx.globalAlpha = 1
+    }
 
-    ctx.lineTo(x, y)
-    ctx.stroke()
     ctx.beginPath()
     ctx.moveTo(x, y)
   }
 
   const clearCanvas = () => {
     const ctx = canvasRef.current!.getContext("2d")!
-    ctx.fillStyle = "#E8F4F8"
+    const bgGrad = ctx.createLinearGradient(0, 0, canvasRef.current!.width, canvasRef.current!.height)
+    bgGrad.addColorStop(0, "#FFF9E6")
+    bgGrad.addColorStop(1, "#E6F3FF")
+    ctx.fillStyle = bgGrad
     ctx.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
-    speak("Lienzo limpio, listo para una nueva obra de arte")
+    speak("Lienzo limpio, ¡creemos algo nuevo!")
   }
 
   const saveDrawing = () => {
     const canvas = canvasRef.current!
     const link = document.createElement("a")
-    link.download = "mi-dibujo-3d.png"
+    link.download = "mi-dibujo-magico.png"
     link.href = canvas.toDataURL()
     link.click()
-    speak("Tu dibujo ha sido guardado exitosamente")
+    speak("Tu obra maestra ha sido guardada")
   }
 
   return (
@@ -164,13 +203,16 @@ const Pintura3D: React.FC = () => {
           <div className="lg:w-80 space-y-4">
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-lg shadow-purple-100/30">
               <h3 className="font-semibold text-purple-600 mb-4 flex items-center gap-2">
-                <span className="text-xl">🎨</span> Paleta de Colores
+                <span className="text-xl">🎨</span> Colores
               </h3>
               <div className="grid grid-cols-6 gap-2">
                 {colors.flat().map((c) => (
                   <button
                     key={c}
-                    onClick={() => setColor(c)}
+                    onClick={() => {
+                      setColor(c)
+                      speak("Color cambiado")
+                    }}
                     className={`h-10 w-full rounded-xl transition-all duration-300 hover:scale-110 ${
                       color === c ? "ring-4 ring-purple-300 shadow-lg scale-110" : "hover:shadow-md"
                     }`}
@@ -182,14 +224,17 @@ const Pintura3D: React.FC = () => {
 
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-lg shadow-purple-100/30">
               <h3 className="font-semibold text-purple-600 mb-4 flex items-center gap-2">
-                <span className="text-xl">✨</span> Tamaño del Pincel
+                <span className="text-xl">✏️</span> Grosor
               </h3>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap justify-center">
                 {brushSizes.map((size) => (
                   <button
                     key={size}
-                    onClick={() => setBrushSize(size)}
-                    className={`px-4 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 ${
+                    onClick={() => {
+                      setBrushSize(size)
+                      speak(`Pincel ${size}`)
+                    }}
+                    className={`px-3 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 text-sm ${
                       brushSize === size
                         ? "bg-gradient-to-r from-purple-300 to-pink-300 text-white shadow-lg scale-105"
                         : "bg-white/80 text-purple-600 hover:bg-white shadow-md"
@@ -203,19 +248,23 @@ const Pintura3D: React.FC = () => {
 
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-lg shadow-purple-100/30">
               <h3 className="font-semibold text-purple-600 mb-4 flex items-center gap-2">
-                <span className="text-xl">💫</span> Efectos Mágicos
+                <span className="text-xl">💫</span> Pinceles Mágicos
               </h3>
-              <div className="flex flex-col gap-3">
-                {effects.map(({ id, name }) => (
+              <div className="flex flex-col gap-2">
+                {effects.map(({ id, name, icon }) => (
                   <button
                     key={id}
-                    onClick={() => setEffect(id)}
-                    className={`p-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 ${
+                    onClick={() => {
+                      setEffect(id)
+                      speak(name)
+                    }}
+                    className={`p-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 text-left flex items-center gap-2 ${
                       effect === id
                         ? "bg-gradient-to-r from-purple-300 to-pink-300 text-white shadow-lg scale-105"
                         : "bg-white/80 text-purple-600 hover:bg-white shadow-md"
                     }`}
                   >
+                    <span className="text-lg">{icon}</span>
                     {name}
                   </button>
                 ))}
@@ -241,7 +290,7 @@ const Pintura3D: React.FC = () => {
           <div className="flex-1 bg-gradient-to-br from-white/80 to-purple-50/80 backdrop-blur-sm rounded-3xl shadow-xl shadow-purple-200/50 p-4 sm:p-6 relative overflow-hidden">
             <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 mb-4 border border-purple-100">
               <h2 className="text-lg font-bold text-purple-600 flex items-center gap-2">
-                <span className="text-2xl">🖼️</span> Lienzo de Creatividad
+                <span className="text-2xl">🖼️</span> Tu Lienzo Mágico
               </h2>
             </div>
 
@@ -260,10 +309,6 @@ const Pintura3D: React.FC = () => {
                 data-testid="pintura-canvas"
                 className="w-full max-w-full h-auto cursor-crosshair bg-white/90 rounded-2xl shadow-lg"
               />
-              <div className="absolute bottom-4 left-4 bg-purple-100/90 backdrop-blur-md border border-purple-200 text-purple-700 text-sm rounded-2xl px-4 py-3 flex items-center gap-2 shadow-lg">
-                <Info className="w-5 h-5 text-purple-500" />
-                <span className="font-medium">Dibuja arrastrando el mouse o tu dedo</span>
-              </div>
             </div>
           </div>
         </div>
