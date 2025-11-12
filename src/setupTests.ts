@@ -51,3 +51,78 @@ Object.defineProperty(document, "documentElement", {
 Object.defineProperty(document, "dispatchEvent", {
   value: jest.fn(),
 });
+
+// Mock Canvas 2D context
+const mockCanvasContext = {
+  fillStyle: "",
+  strokeStyle: "",
+  lineWidth: 1,
+  fillRect: jest.fn(),
+  clearRect: jest.fn(),
+  beginPath: jest.fn(),
+  arc: jest.fn(),
+  fill: jest.fn(),
+  stroke: jest.fn(),
+  save: jest.fn(),
+  restore: jest.fn(),
+  translate: jest.fn(),
+  rotate: jest.fn(),
+  fillText: jest.fn(),
+  font: "",
+  textAlign: "",
+  textBaseline: "",
+  measureText: jest.fn(() => ({ width: 0 })),
+  createLinearGradient: jest.fn(() => ({
+    addColorStop: jest.fn(),
+  })),
+  createRadialGradient: jest.fn(() => ({
+    addColorStop: jest.fn(),
+  })),
+  drawImage: jest.fn(),
+  getImageData: jest.fn(() => ({
+    data: new Uint8ClampedArray(),
+    width: 800,
+    height: 600,
+  })),
+};
+
+HTMLCanvasElement.prototype.getContext = jest.fn((contextType: string) => {
+  if (contextType === "2d") {
+    return mockCanvasContext;
+  }
+  return null;
+}) as any;
+
+HTMLCanvasElement.prototype.toDataURL = jest.fn(() => "data:image/png;base64,") as any;
+
+// Mock SpeechSynthesis
+class MockSpeechSynthesisUtterance {
+  text: string = "";
+  lang: string = "";
+  rate: number = 1;
+  pitch: number = 1;
+  volume: number = 1;
+  onstart: ((event: Event) => void) | null = null;
+  onend: ((event: Event) => void) | null = null;
+  onerror: ((event: Event) => void) | null = null;
+
+  constructor(text: string = "") {
+    this.text = text;
+  }
+}
+
+Object.defineProperty(window, "SpeechSynthesisUtterance", {
+  value: MockSpeechSynthesisUtterance,
+  writable: true,
+});
+
+Object.defineProperty(window, "speechSynthesis", {
+  value: {
+    speak: jest.fn(),
+    cancel: jest.fn(),
+    pause: jest.fn(),
+    resume: jest.fn(),
+    getVoices: jest.fn(() => []),
+  },
+  writable: true,
+});
