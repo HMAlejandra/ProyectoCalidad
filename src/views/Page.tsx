@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
 import Pintura3DView from "./Pintura3DPage"
 import SistemaSolar3DView from "./SistemaSolar3DView"
 import DigitalSculptureView from "./DigitalSculptureView"
@@ -9,6 +10,16 @@ type Component = "pintura" | "sistema-solar" | "escultura"
 
 export default function Page() {
   const [activeComponent, setActiveComponent] = useState<Component>("pintura")
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Sincroniza la pestaña activa con la ruta actual
+    const path = location.pathname
+    if (path === "/sistema-solar") setActiveComponent("sistema-solar")
+    else if (path === "/pintura3d") setActiveComponent("pintura")
+    else if (path === "/escultura3d") setActiveComponent("escultura")
+  }, [location.pathname])
 
   const components = [
     {
@@ -60,7 +71,13 @@ export default function Page() {
             {components.map((comp) => (
               <button
                 key={comp.id}
-                onClick={() => setActiveComponent(comp.id)}
+                onClick={() => {
+                  setActiveComponent(comp.id)
+                  // Navegar a la ruta correspondiente para que la URL refleje la selección
+                  if (comp.id === "sistema-solar") navigate("/sistema-solar")
+                  else if (comp.id === "pintura") navigate("/pintura3d")
+                  else if (comp.id === "escultura") navigate("/escultura3d")
+                }}
                 className={`flex-shrink-0 px-5 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                   activeComponent === comp.id
                     ? "bg-gradient-to-r from-purple-300 to-pink-300 text-white shadow-lg scale-105"
