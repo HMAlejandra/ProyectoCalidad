@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useEffect, useRef } from "react"
 import { Volume2, VolumeX, Play, Pause, Star } from "lucide-react"
@@ -70,6 +70,91 @@ const planetData: Record<
       lunas: "1 luna",
     },
   },
+  marte: {
+    nombre: "Marte",
+    color: "#CD5C5C",
+    tamaño: 32,
+    orbita: 180,
+    velocidad: 0.8,
+    emoji: "♂️",
+    info: "Marte es conocido como el planeta rojo por su color. Tiene los volcanes más grandes del sistema solar.",
+    detalles: "Los científicos buscan señales de vida antigua en Marte.",
+    narracion:
+      "Marte es conocido como el planeta rojo. Su color se debe al óxido de hierro en su superficie. Tiene el volcán más grande del sistema solar llamado Monte Olimpo. Los científicos están buscando señales de vida antigua.",
+    datos: {
+      distancia: "228 millones km",
+      temperatura: "-63°C promedio",
+      lunas: "2 lunas: Fobos y Deimos",
+    },
+  },
+  jupiter: {
+    nombre: "Júpiter",
+    color: "#D4A574",
+    tamaño: 60,
+    orbita: 250,
+    velocidad: 0.4,
+    emoji: "♃",
+    info: "Júpiter es el planeta más grande del sistema solar. Tiene una gran mancha roja que es una tormenta gigante.",
+    detalles: "Tiene más de 70 lunas y un fuerte campo magnético.",
+    narracion:
+      "Júpiter es el gigante del sistema solar. Es el planeta más grande de todos. Tiene una gran mancha roja que es una tormenta gigante que lleva siglos activa. Tiene más de 79 lunas orbitando a su alrededor.",
+    datos: {
+      distancia: "778 millones km",
+      temperatura: "-145°C",
+      lunas: "+79 lunas",
+    },
+  },
+  saturno: {
+    nombre: "Saturno",
+    color: "#E8D4A0",
+    tamaño: 55,
+    orbita: 320,
+    velocidad: 0.3,
+    emoji: "♄",
+    info: "Saturno es famoso por sus hermosos anillos hechos de hielo y rocas.",
+    detalles: "Es el segundo planeta más grande y podría flotar en el agua.",
+    narracion:
+      "Saturno es el planeta más hermoso por sus anillos brillantes. Estos anillos están hechos de miles de millones de pedazos de hielo y rocas. Es tan liviano que podría flotar en el agua si hubiera un océano lo suficientemente grande.",
+    datos: {
+      distancia: "1.4 mil millones km",
+      temperatura: "-178°C",
+      lunas: "+82 lunas",
+    },
+  },
+  urano: {
+    nombre: "Urano",
+    color: "#4FD0E7",
+    tamaño: 48,
+    orbita: 380,
+    velocidad: 0.2,
+    emoji: "♅",
+    info: "Urano es un planeta de color azul verdoso que gira de lado.",
+    detalles: "Está tan lejos del Sol que es muy frío y oscuro.",
+    narracion:
+      "Urano es un planeta muy especial porque gira de lado, como si estuviera acostado. Es de color azul verdoso y tiene anillos como Saturno, pero son más difíciles de ver. Hace mucho frío en Urano.",
+    datos: {
+      distancia: "2.9 mil millones km",
+      temperatura: "-224°C",
+      lunas: "27 lunas",
+    },
+  },
+  neptuno: {
+    nombre: "Neptuno",
+    color: "#4169E1",
+    tamaño: 46,
+    orbita: 430,
+    velocidad: 0.15,
+    emoji: "♆",
+    info: "Neptuno es el planeta más alejado del Sol. Tiene vientos muy fuertes.",
+    detalles: "Es de color azul intenso debido al metano en su atmósfera.",
+    narracion:
+      "Neptuno es el planeta más lejano del Sol en nuestro sistema solar. Es de color azul intenso y tiene los vientos más rápidos de todos los planetas. Tarda 165 años en dar una vuelta completa alrededor del Sol.",
+    datos: {
+      distancia: "4.5 mil millones km",
+      temperatura: "-214°C",
+      lunas: "14 lunas",
+    },
+  },
 }
 
 // === CURIOSIDADES ===
@@ -77,6 +162,11 @@ const curiosidades = [
   "🌟 El Sol es tan grande que cabrían 1.3 millones de Tierras dentro de él.",
   "🚀 La luz del Sol tarda 8 minutos en llegar a la Tierra.",
   "🪐 Los anillos de Saturno están hechos de hielo y polvo.",
+  "⭐ Júpiter protege a la Tierra atrayendo asteroides con su gravedad.",
+  "🌙 La Luna se está alejando de la Tierra 3.8 cm cada año.",
+  "♀️ Venus gira en dirección contraria a los demás planetas.",
+  "🔴 Un día en Venus dura más que un año en Venus.",
+  "🌍 La Tierra es el único planeta no nombrado por un dios.",
 ]
 
 // === COMPONENTE PRINCIPAL ===
@@ -140,15 +230,67 @@ export default function SistemaSolar3D() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    let rotacion = 0
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.fillStyle = "#0a1628"
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      ctx.fillStyle = "#FFD700"
+      const centerX = canvas.width / 2
+      const centerY = canvas.height / 2
+
+      // Dibujar estrellas de fondo
+      for (let i = 0; i < 100; i++) {
+        const x = (i * 67) % canvas.width
+        const y = (i * 113) % canvas.height
+        const brillo = 0.3 + Math.sin(Date.now() / 1000 + i) * 0.3
+        ctx.fillStyle = `rgba(255, 255, 255, ${brillo})`
+        ctx.fillRect(x, y, 2, 2)
+      }
+
+      // Dibujar el Sol
+      const pulso = 1 + Math.sin(Date.now() / 500) * 0.05
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 50 * pulso)
+      gradient.addColorStop(0, "#FFF4E6")
+      gradient.addColorStop(0.3, "#FDB813")
+      gradient.addColorStop(0.6, "#FFAA00")
+      gradient.addColorStop(1, "#FF6B00")
+      ctx.fillStyle = gradient
       ctx.beginPath()
-      ctx.arc(canvas.width / 2, canvas.height / 2, 50, 0, Math.PI * 2)
+      ctx.arc(centerX, centerY, 50 * pulso, 0, Math.PI * 2)
       ctx.fill()
+
+      // Dibujar planetas y órbitas
+      Object.values(planetData).forEach((planeta) => {
+        // Dibujar órbita como círculo
+        ctx.strokeStyle = "rgba(100, 149, 237, 0.2)"
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, planeta.orbita, 0, Math.PI * 2)
+        ctx.stroke()
+
+        // Calcular posición del planeta
+        const angulo = (rotacion * planeta.velocidad) * (Math.PI / 180)
+        const x = centerX + Math.cos(angulo) * planeta.orbita
+        const y = centerY + Math.sin(angulo) * planeta.orbita * 0.4
+
+        // Dibujar planeta
+        ctx.fillStyle = planeta.color
+        ctx.beginPath()
+        ctx.arc(x, y, planeta.tamaño / 2, 0, Math.PI * 2)
+        ctx.fill()
+
+        // Dibujar nombre del planeta cerca
+        ctx.font = "bold 10px Arial"
+        ctx.fillStyle = "#FFFFFF"
+        ctx.textAlign = "center"
+        ctx.fillText(planeta.emoji, x, y - planeta.tamaño / 2 - 8)
+      })
+
+      if (animando) {
+        rotacion = (rotacion + 0.5) % 360
+      }
 
       animationRef.current = requestAnimationFrame(animate)
     }
