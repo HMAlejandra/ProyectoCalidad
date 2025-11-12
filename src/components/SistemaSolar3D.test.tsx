@@ -67,7 +67,7 @@ describe("🌞 SistemaSolar3D Component", () => {
   test("muestra el texto de instrucción", () => {
     render(<SistemaSolar3D />);
     expect(
-      screen.getByText(/Haz clic en un planeta para escucharlo 🚀/i)
+      screen.getByText(/Haz clic en un planeta para escucharlo/i)
     ).toBeInTheDocument();
   });
 

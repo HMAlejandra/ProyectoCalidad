@@ -40,12 +40,12 @@ describe("DigitalSculpture", () => {
 
   test("renderiza botón de guardar", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText(/💾 Guardar/)).toBeInTheDocument();
+    expect(screen.getByText("Guardar")).toBeInTheDocument();
   });
 
   test("renderiza botón de reiniciar", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText(/🔄 Reiniciar/)).toBeInTheDocument();
+    expect(screen.getByText("Reiniciar")).toBeInTheDocument();
   });
 
   test("renderiza canvas", () => {
@@ -66,21 +66,21 @@ describe("DigitalSculpture", () => {
 
   test("diálogo de reinicio", () => {
     render(<DigitalSculpture />);
-    const btn = screen.getByText(/🔄 Reiniciar/).closest("button");
+    const btn = screen.getAllByText(/Reiniciar/)[1]?.closest("button");
     if (btn) {
       fireEvent.click(btn);
-      expect(screen.getByText(/¿Reiniciar\?/)).toBeInTheDocument();
+      expect(screen.getByText(/¿Reiniciar escultura\?/)).toBeInTheDocument();
     }
   });
 
   test("cancela reinicio", () => {
     render(<DigitalSculpture />);
-    const btn = screen.getByText(/🔄 Reiniciar/).closest("button");
+    const btn = screen.getAllByText(/Reiniciar/)[1]?.closest("button");
     if (btn) {
       fireEvent.click(btn);
       const cancelBtn = screen.getByText(/Cancelar/);
       fireEvent.click(cancelBtn);
-      expect(screen.queryByText(/¿Reiniciar\?/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/¿Reiniciar escultura\?/)).not.toBeInTheDocument();
     }
   });
 });

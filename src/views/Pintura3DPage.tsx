@@ -1,12 +1,11 @@
-import React from "react";
-import Pintura3D from "../components/Pintura3D";
+"use client"
 
-const Pintura3DPage: React.FC = () => {
+import Pintura3D from "../components/Pintura3D"
+
+export default function Pintura3DView() {
   return (
-    <div style={{ height: "100vh" }}>
+    <div className="h-screen">
       <Pintura3D />
     </div>
-  );
-};
-
-export default Pintura3DPage;
+  )
+}
