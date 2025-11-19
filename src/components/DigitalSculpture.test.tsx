@@ -12,7 +12,10 @@ describe("DigitalSculpture", () => {
       createImageData: jest.fn(), translate: jest.fn(), rotate: jest.fn(),
       closePath: jest.fn(), scale: jest.fn(), save: jest.fn(), restore: jest.fn(),
       drawImage: jest.fn(), fill: jest.fn(), strokeStyle: "", lineWidth: 1,
-      fillText: jest.fn(), toDataURL: jest.fn(() => "data:image/png;base64,")
+      fillText: jest.fn(), toDataURL: jest.fn(() => "data:image/png;base64,"),
+      createLinearGradient: jest.fn(() => ({
+        addColorStop: jest.fn()
+      }))
     }));
   });
 
@@ -22,20 +25,20 @@ describe("DigitalSculpture", () => {
 
   test("renderiza herramientas", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText("Moldear")).toBeInTheDocument();
-    expect(screen.getByText("Añadir")).toBeInTheDocument();
+    expect(screen.getByText("Círculo")).toBeInTheDocument();
+    expect(screen.getByText("Cuadrado")).toBeInTheDocument();
   });
 
-  test("renderiza decoración", () => {
+  test("renderiza más herramientas", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText("Pintar")).toBeInTheDocument();
+    expect(screen.getByText("Triángulo")).toBeInTheDocument();
     expect(screen.getByText("Borrar")).toBeInTheDocument();
   });
 
   test("renderiza íconos", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText("✋")).toBeInTheDocument();
-    expect(screen.getByText("➕")).toBeInTheDocument();
+    expect(screen.getByText("🔵")).toBeInTheDocument();
+    expect(screen.getByText("⬜")).toBeInTheDocument();
   });
 
   test("renderiza botón de guardar", () => {
@@ -43,9 +46,9 @@ describe("DigitalSculpture", () => {
     expect(screen.getByText("Guardar")).toBeInTheDocument();
   });
 
-  test("renderiza botón de reiniciar", () => {
+  test("renderiza botón de nuevo", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText("Reiniciar")).toBeInTheDocument();
+    expect(screen.getByText("Nuevo")).toBeInTheDocument();
   });
 
   test("renderiza canvas", () => {
@@ -56,31 +59,27 @@ describe("DigitalSculpture", () => {
 
   test("renderiza header", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText(/Módulo interactivo - Mentes Creativas/)).toBeInTheDocument();
+    expect(screen.getByText("Escultura Creativa 3D")).toBeInTheDocument();
   });
 
-  test("renderiza área de escultura", () => {
+  test("renderiza área de lienzo", () => {
     render(<DigitalSculpture />);
-    expect(screen.getByText(/Área de Escultura/)).toBeInTheDocument();
+    expect(screen.getByText("Lienzo de Creatividad")).toBeInTheDocument();
   });
 
-  test("diálogo de reinicio", () => {
+  test("diálogo de nuevo", () => {
     render(<DigitalSculpture />);
-    const btn = screen.getAllByText(/Reiniciar/)[1]?.closest("button");
-    if (btn) {
-      fireEvent.click(btn);
-      expect(screen.getByText(/¿Reiniciar escultura\?/)).toBeInTheDocument();
-    }
+    const btn = screen.getByText("Nuevo");
+    fireEvent.click(btn);
+    expect(screen.getByText("¿Crear nueva obra?")).toBeInTheDocument();
   });
 
-  test("cancela reinicio", () => {
+  test("cancela nuevo", () => {
     render(<DigitalSculpture />);
-    const btn = screen.getAllByText(/Reiniciar/)[1]?.closest("button");
-    if (btn) {
-      fireEvent.click(btn);
-      const cancelBtn = screen.getByText(/Cancelar/);
-      fireEvent.click(cancelBtn);
-      expect(screen.queryByText(/¿Reiniciar escultura\?/)).not.toBeInTheDocument();
-    }
+    const btn = screen.getByText("Nuevo");
+    fireEvent.click(btn);
+    const cancelBtn = screen.getByText("Cancelar");
+    fireEvent.click(cancelBtn);
+    expect(screen.queryByText("¿Crear nueva obra?")).not.toBeInTheDocument();
   });
 });

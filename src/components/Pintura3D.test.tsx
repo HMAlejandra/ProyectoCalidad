@@ -53,6 +53,13 @@ beforeAll(() => {
     strokeStyle: "",
     lineWidth: 1,
     fillText: jest.fn(),
+    createLinearGradient: jest.fn(() => ({
+      addColorStop: jest.fn()
+    })),
+    toDataURL: jest.fn(() => "data:image/png;base64,"),
+    globalAlpha: 1,
+    shadowBlur: 0,
+    shadowColor: "",
   }));
 
   // Polyfill SpeechSynthesisUtterance for jsdom
@@ -73,16 +80,16 @@ describe("🧪 Componente Pintura3D", () => {
   it("se renderiza correctamente con título principal", () => {
     render(<Pintura3D />);
     expect(screen.getByText("DreamDraw 3D")).toBeInTheDocument();
-    // Comprobamos que el mensaje de ayuda del canvas esté presente
-    expect(screen.getByText(/Dibuja arrastrando el mouse/i)).toBeInTheDocument();
+    // Comprobamos que el subtítulo esté presente
+    expect(screen.getByText("Crea arte digital mágico")).toBeInTheDocument();
   });
 
   it("muestra botones de herramientas y colores", () => {
     render(<Pintura3D />);
-    // El componente actual tiene Paleta de Colores, Tamaño, y Efectos Mágicos
-    expect(screen.getByText(/Paleta de Colores/i)).toBeInTheDocument();
-    expect(screen.getByText(/Tamaño del Pincel/i)).toBeInTheDocument();
-    expect(screen.getByText(/Efectos Mágicos/i)).toBeInTheDocument();
+    // El componente actual tiene Colores, Grosor, y Pinceles Mágicos
+    expect(screen.getByText("Colores")).toBeInTheDocument();
+    expect(screen.getByText("Grosor")).toBeInTheDocument();
+    expect(screen.getByText("Pinceles Mágicos")).toBeInTheDocument();
   });
 
   it("permite seleccionar una herramienta", () => {
