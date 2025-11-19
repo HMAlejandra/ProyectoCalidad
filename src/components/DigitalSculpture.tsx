@@ -160,26 +160,9 @@ export default function DigitalSculpture() {
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     setPoints((p) => [...p, { x, y, tool: selectedTool, color: selectedColor, size: brushSize }])
-  }
-
-  const toolName = (tool: Tool) => {
-    switch (tool) {
-      case "circulo":
-        return "Círculo"
-      case "cuadrado":
-        return "Cuadrado"
-      case "triangulo":
-        return "Triángulo"
-      case "linea":
-        return "Línea"
-      case "borrar":
-        return "Borrar"
-      default:
-        return "ninguna"
     }
-  }
-
-  const handleSave = () => {
+  
+    const handleSave = () => {
     localStorage.setItem("sculpture-points", JSON.stringify(points))
     speak("¡Tu obra ha sido guardada!")
   }
